@@ -5,7 +5,8 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    # Changed from windows-2022 to windows-2025 to enable the native v145 toolset
+    runs-on: windows-2025
 
     steps:
     - name: Checkout Repository
@@ -32,15 +33,13 @@ jobs:
 
     - name: Run Package Manager Restores
       run: |
-        # 1. Restore traditional NuGet legacy assets explicitly 
         nuget restore OpenGlass.slnx
-        
-        # 2. Run argument-free vcpkg install manifest mode download
         vcpkg integrate install
         vcpkg install --triplet=x64-windows
 
     - name: Run Windows C++ MSBuild Engine
       run: |
+        # Runs natively on the v145 environment matching your project definition
         msbuild OpenGlass.slnx /p:Configuration=Release /p:Platform=x64
         
     - name: Upload Windows Binaries (.dll & .exe)
