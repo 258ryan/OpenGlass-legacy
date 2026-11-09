@@ -27,15 +27,14 @@ jobs:
     - name: Setup MSBuild Toolchain
       uses: microsoft/setup-msbuild@v2
 
-    - name: Install vcpkg Dependencies
+    - name: Run Manifest Mode Dependency Restore
       run: |
         vcpkg integrate install
-        # Force installation of the exact required project dependencies
-        vcpkg install wxwidgets wil knsoft-slimdetours --triplet=x64-windows
+        # Run argument-free install to compile from the project's vcpkg.json file
+        vcpkg install --triplet=x64-windows
 
     - name: Run Windows C++ MSBuild Engine
       run: |
-        # Use native MSBuild instead of dotnet build to handle .vcxproj files
         msbuild OpenGlass.slnx /p:Configuration=Release /p:Platform=x64
         
     - name: Upload Windows Binaries (.dll & .exe)
