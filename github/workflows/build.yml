@@ -1,0 +1,48 @@
+name: Build OpenGlass Windows Binaries
+
+on:
+  workflow_dispatch: # Allows you to manually click "Run workflow" anytime
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Extract Project Source Zip
+      run: |
+        # Find the uploaded zip file dynamically and unpack it into the workspace root
+        $zipFile = Get-ChildItem -Filter *.zip | Select-Object -First 1
+        if ($zipFile) {
+            Write-Host "Extracting $($zipFile.Name)..."
+            Expand-Archive -Path $zipFile.FullName -DestinationPath "." -Force
+        }
+        
+        # If it extracted into a subfolder layer, flatten everything back to the root directory
+        $subFolder = Get-ChildItem -Directory | Where-Object { $_.Name -like "*OpenGlass*" } | Select-Object -First 1
+        if ($subFolder) {
+            Write-Host "Flattening directory structure out of $($subFolder.Name)..."
+            Move-Item -Path "$($subFolder.FullName)\*" -Destination "." -Force -ErrorAction SilentlyContinue
+        }
+
+    - name: Setup MSBuild Toolchain
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Integrate vcpkg
+      run: |
+        vcpkg integrate install
+
+    - name: Run Windows Compilation Build
+      run: |
+        dotnet restore OpenGlass.slnx
+        dotnet build OpenGlass.slnx --configuration Release
+
+    - name: Upload Windows Binaries (.dll & .exe)
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenGlass-Windows-Binaries
+        path: |
+          **/Release/*.dll
+          **/Release/*.exe
