@@ -27,10 +27,16 @@ jobs:
     - name: Setup MSBuild Toolchain
       uses: microsoft/setup-msbuild@v2
 
-    - name: Run Manifest Mode Dependency Restore
+    - name: Setup NuGet Command Line
+      uses: nuget/setup-nuget@v2
+
+    - name: Run Package Manager Restores
       run: |
+        # 1. Restore traditional NuGet legacy assets explicitly 
+        nuget restore OpenGlass.slnx
+        
+        # 2. Run argument-free vcpkg install manifest mode download
         vcpkg integrate install
-        # Run argument-free install to compile from the project's vcpkg.json file
         vcpkg install --triplet=x64-windows
 
     - name: Run Windows C++ MSBuild Engine
