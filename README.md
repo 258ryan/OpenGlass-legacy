@@ -108,7 +108,7 @@ The Windows 7/8 values (`GlassType`, `HighlightStyle`, `CaptionButtons`, `Center
 | RoundRectRadius | DWORD | Radius of glass geometry. Default 8, `0` gives square corners. |
 | CaptionTextAliasing | DWORD | 0x0 = Windows 7 style ClearType (default), 0x1 = Windows 8 style. |
 | TextGlowMode | DWORD | Default 2 (atlas glow, dimmer when inactive). 0 none, 1 atlas, 3 composited. |
-| DisableModernBorders | DWORD | Default 1 (Windows 11 only). |
+| DisableModernBorders | DWORD | Default 0 (Windows 11 only). |
 | GlassOverrideAccent | DWORD | Overrides accent blur surfaces with glass (default 0). |
 | CustomThemeAtlas / CustomThemeReflection / CustomThemeMaterial / MaterialOpacity | String / DWORD | Custom theme art. |
 | DisableGlassOnBattery | DWORD | 1 = opaque glass in energy saver (default), 0 = keep glass. Intended for `HKLM`. |

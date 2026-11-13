@@ -236,8 +236,8 @@ void GlassFrameDemodernizer::Update(GlassEngine::UpdateType type)
 
 	if (type & GlassEngine::UpdateType::Theme)
 	{
-		// Vista has no modern borders: disabled unless the value says otherwise
-		Shared::g_disableModernBorders = static_cast<bool>(GlassEngine::GetDwordFromRegistry(L"DisableModernBorders", TRUE));
+		// off unless the value says otherwise (leaves Windows 11 borders alone, which frame-less windows rely on)
+		Shared::g_disableModernBorders = static_cast<bool>(GlassEngine::GetDwordFromRegistry(L"DisableModernBorders", FALSE));
 	}
 }
 

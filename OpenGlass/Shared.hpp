@@ -27,8 +27,8 @@ namespace OpenGlass::Shared
 
 	inline bool g_disableOnBattery{ true };
 	inline bool g_overrideAccent{ false };
-	// Vista has no modern borders (DisableModernBorders, default on)
-	inline bool g_disableModernBorders{ true };
+	// DisableModernBorders, default off
+	inline bool g_disableModernBorders{ false };
 	// Vista: 8
 	inline int g_roundRectRadius{ 8 };
 	inline float g_blurAmount{};

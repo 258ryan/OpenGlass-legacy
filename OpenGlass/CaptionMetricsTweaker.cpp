@@ -87,6 +87,13 @@ HRESULT CaptionMetricsTweaker::MyCTopLevelWindow_UpdateNCAreaPositionsAndSizes(u
 		return hr;
 	}
 
+	// windows whose frame DWM does not draw (frame taken off DWM, e.g. Basic/Classic frames drawn by
+	// uxtheme or user32) keep the buttons and metrics they were given.
+	if (!This->HasNonClientBackground(data))
+	{
+		return hr;
+	}
+
 	auto maximized = This->IsWindowMaximized();
 	auto toolWindow = This->IsToolWindow();
 	auto loneButton = This->IsLoneButton();
