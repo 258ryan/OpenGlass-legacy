@@ -44,6 +44,49 @@ jobs:
         # Runs natively on the v145 environment matching your project definition
         msbuild OpenGlass.slnx /p:Configuration=Release /p:Platform=x64
         
+    - name: Locate build output
+      id: out
+      run: |
+        $dll = Get-ChildItem -Recurse -Filter OpenGlass.dll -Path . |
+          Where-Object { $_.FullName -match '\\Release\\' } | Select-Object -First 1
+        if (-not $dll) { throw "OpenGlass.dll was not found in a Release folder." }
+        Write-Host "Build output: $($dll.DirectoryName)"
+        "path=$($dll.DirectoryName)" >> $env:GITHUB_OUTPUT
+
+    - name: Locate Inno Setup
+      id: iscc
+      run: |
+        $iscc = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source
+        if (-not $iscc) {
+            $iscc = @(
+                "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+                "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+            ) | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+        }
+        if (-not $iscc) {
+            Write-Host "Inno Setup not preinstalled, installing with Chocolatey..."
+            choco install innosetup --no-progress -y
+            $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+        }
+        if (-not (Test-Path -LiteralPath $iscc)) { throw "ISCC.exe was not found." }
+        "path=$iscc" >> $env:GITHUB_OUTPUT
+
+    - name: Build Inno Setup installer
+      env:
+        OPENGLASS_ISCC: ${{ steps.iscc.outputs.path }}
+        BUILD_PATH: ${{ steps.out.outputs.path }}
+      run: |
+        & $env:OPENGLASS_ISCC "/DBuildPath=$env:BUILD_PATH" "/DSetupName=OpenGlassSetup" "Scripts\OpenGlass.iss"
+        if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
+        if (-not (Test-Path -LiteralPath (Join-Path $env:BUILD_PATH "OpenGlassSetup.exe"))) { throw "OpenGlassSetup.exe was not produced." }
+
+    - name: Upload Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenGlass-Installer
+        path: ${{ steps.out.outputs.path }}/OpenGlassSetup.exe
+        if-no-files-found: error
+
     - name: Upload Windows Binaries (.dll & .exe)
       uses: actions/upload-artifact@v4
       with:
