@@ -1413,7 +1413,7 @@ namespace OpenGlass
 
 		m_slGlassOpacity->Bind(wxEVT_SLIDER, [this, updateDword, updateInheritance, deleteValue, setSliderTooltipValue](wxCommandEvent& e) {
 			int val = e.GetInt();
-			if (val == 63)
+			if (val == 55)
 			{
 				deleteValue(L"GlassOpacity");
 				NotifySettingsChange(ChangeType::Colorization);

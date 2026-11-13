@@ -941,10 +941,12 @@ void GlassRenderer::Update(GlassEngine::UpdateType type)
 	}
 	if (type & GlassEngine::UpdateType::Backdrop)
 	{
-		// Vista glass: 63% color intensity by default, no material texture
-		const auto value = GlassEngine::GetDwordFromRegistry(L"GlassOpacity", 63);
+		// glass opacity (0-100%, the real value: nothing scales it down). Defaults: 55% active, 100% inactive.
+		// a GlassOpacity that is set also becomes the inactive default, as before.
+		const auto activeSet = GlassEngine::TryGetDwordFromRegistry(L"GlassOpacity");
+		const DWORD value = activeSet.value_or(55);
 		Shared::g_glassOpacity = std::clamp(static_cast<float>(value) / 100.f, 0.f, 1.f);
-		Shared::g_glassOpacityInactive = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"GlassOpacityInactive", value)) / 100.f, 0.f, 1.f);
+		Shared::g_glassOpacityInactive = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"GlassOpacityInactive", activeSet ? value : 100)) / 100.f, 0.f, 1.f);
 		Shared::g_materialIntensity = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"MaterialOpacity")) / 100.f, 0.f, 1.f);
 	}
 }

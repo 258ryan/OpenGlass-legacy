@@ -586,7 +586,7 @@ namespace OpenGlass
 			// Spacer to align with the "Auto" dropdown column below
 			row->Add(new wxPanel(panel, wxID_ANY, wxDefaultPosition, wxSize(70, 1)), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
 
-			m_slGlassOpacity = new NativeSlider(panel, wxID_ANY, 63, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
+			m_slGlassOpacity = new NativeSlider(panel, wxID_ANY, 55, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
 			row->Add(m_slGlassOpacity, 1, wxALIGN_CENTER_VERTICAL);
 			AddOptionStatus(panel, row, L"GlassOpacity");
 			m_vistaOpacitySizer->Add(row, 0, wxEXPAND | wxTOP, 2);
@@ -607,7 +607,7 @@ namespace OpenGlass
 			// Spacer to align with the "Auto" dropdown column below
 			row->Add(new wxPanel(panel, wxID_ANY, wxDefaultPosition, wxSize(70, 1)), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
 
-			m_slGlassOpacityInactive = new NativeSlider(panel, wxID_ANY, 63, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
+			m_slGlassOpacityInactive = new NativeSlider(panel, wxID_ANY, 100, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
 			m_slGlassOpacityInactive->Enable(false);
 			row->Add(m_slGlassOpacityInactive, 1, wxALIGN_CENTER_VERTICAL);
 			AddOptionStatus(panel, row, L"GlassOpacityInactive");

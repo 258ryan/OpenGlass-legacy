@@ -81,7 +81,7 @@ style switches; the values below are fixed (96 DPI values, scaled by the window 
 | Corners | Rounded top and bottom, `RoundRectRadius` 8 |
 | Frame | Left/right/bottom 8 px (4 sizing + 4 padded), title bar 29 px (8 + 21 caption). Applied by overriding `GetSystemMetricsForDpi` inside `dwm.exe` only |
 | Caption buttons | 18 px high. Minimize 26, maximize/restore 25, close 43 (cluster 94), scaled with `MulDiv(value, dpi, 96)` in `CaptionMetricsTweaker::CalculateButtonSize` |
-| Glass | Vista blur (sigma 3), color intensity 63%, colorization opacities 55% active / 100% inactive / 75% maximized / 75% inactive maximized |
+| Glass | Vista blur (sigma 3), glass opacity 55% active / 100% inactive (both adjustable 0-100%), colorization factors 100 / 100 / 75 / 75 |
 | Base colors | Transparent `0x00000000`, maximized `0xFF000000`, opaque `0xFFDFDFDF`; the maximized base is preferred for opaque glass (Vista) |
 | Maximized windows | Opaque black glass with white caption text |
 | Highlights | Vista frame highlights (corner glare hidden on maximized windows, side highlight) |
@@ -97,8 +97,8 @@ The Windows 7/8 values (`GlassType`, `HighlightStyle`, `CaptionButtons`, `Center
 | Key Name | Type | Description |
 | -------- | ---- | ----------- |
 | ColorizationColor(Override)<br>ColorizationColorInactive | DWORD | ARGB color used for the glass effect, alpha channel is ignored. |
-| GlassOpacity<br>GlassOpacityInactive | DWORD | Intensity of the color (0-100%). Default 63%. |
-| ColorizationOpacity<br>ColorizationOpacityInactive<br>ColorizationOpacityMaximized<br>ColorizationOpacityInactiveMaximized | DWORD | Factors applied to color blending (0-100%). Defaults 55 / 100 / 75 / 75. `0xFFFFFFFE` or `0xFFFFFFFF` use the default. |
+| GlassOpacity<br>GlassOpacityInactive | DWORD | Glass opacity (0-100%), the real value, not scaled. Defaults 55% active, 100% inactive; a set `GlassOpacity` is also the inactive default. |
+| ColorizationOpacity<br>ColorizationOpacityInactive<br>ColorizationOpacityMaximized<br>ColorizationOpacityInactiveMaximized | DWORD | Factors applied to color blending (0-100%). Defaults 100 / 100 / 75 / 75. `0xFFFFFFFE` or `0xFFFFFFFF` use the default. |
 | ColorizationBaseTransparent<br>ColorizationBaseMaximized<br>ColorizationBaseOpaque | DWORD | ARGB base colors. Defaults `0x00000000`, `0xFF000000`, `0xFFDFDFDF`. `0xFFFFFFFE` / `0xFFFFFFFF` use the default. |
 | ColorizationOpaqueBlend | DWORD | Controls the transparency of glass effect (default = 0). |
 | ColorizationColorCaption<br>ColorizationColorCaptionInactive<br>ColorizationColorCaptionMaximized<br>ColorizationColorCaptionInactiveMaximized | DWORD | Caption text color, 0xBBGGRR. `0xFFFFFFFD` = Vista default (black, `#222222` inactive, white maximized), `0xFFFFFFFE` = from the theme, `0xFFFFFFFF` = system. |

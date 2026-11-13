@@ -500,8 +500,9 @@ void CustomThemeAtlasLoader::Update(GlassEngine::UpdateType type)
 		inactive = GlassEngine::GetDwordFromRegistry(L"ColorizationOpacityInactive", active);
 		maximized = GlassEngine::GetDwordFromRegistry(L"ColorizationOpacityMaximized", active);
 		inactiveMaximized = GlassEngine::GetDwordFromRegistry(L"ColorizationOpacityInactiveMaximized", inactive);
-		// active glass is the more see-through one (55%), inactive glass is the more opaque one (100%).
-		Shared::g_colorizationOpacity = percent(active, .55f);
+		// neutral factors for active/inactive: the glass opacity sliders (GlassOpacity, GlassOpacityInactive)
+		// are the real opacity and carry the 55% / 100% defaults, so nothing caps them here.
+		Shared::g_colorizationOpacity = percent(active, 1.f);
 		Shared::g_colorizationOpacityInactive = percent(inactive, 1.f);
 		Shared::g_colorizationOpacityMaximized = percent(maximized, .75f);
 		Shared::g_colorizationOpacityInactiveMaximized = percent(inactiveMaximized, .75f);

@@ -226,7 +226,7 @@ namespace OpenGlass
 			? m_config->GetDword(L"ColorizationColorOverride", 0xFF000000)
 			: m_config->GetDword(L"ColorizationColor", 0xFF000000);
 		m_cpColorizationColor->SetColour(dwordToColor(activeColor));
-		m_slGlassOpacity->SetValue(m_config->GetDword(L"GlassOpacity", 63));
+		m_slGlassOpacity->SetValue(m_config->GetDword(L"GlassOpacity", 55));
 		syncSliderTooltip(m_slGlassOpacity);
 
 		auto loadOptColor = [&](wxCheckBox* chk, wxColourPickerCtrl* cp, const std::wstring& key, DWORD defVal) {
@@ -250,7 +250,7 @@ namespace OpenGlass
 		loadOptColor(m_chkEnableInactiveColor, m_cpColorizationColorInactive, L"ColorizationColorInactive", 0xFF000000); // 0xFF000000 means use active as visual default
 
 		// Inactive Opacity
-		const DWORD activeOpacity = m_config->GetDword(L"GlassOpacity", 63);
+		const DWORD activeOpacity = m_config->HasValue(L"GlassOpacity") ? m_config->GetDword(L"GlassOpacity", 55) : 100;
 		const bool hasInactiveOpacity = m_config->HasValue(L"GlassOpacityInactive");
 		DWORD inactiveOp = hasInactiveOpacity ? m_config->GetDword(L"GlassOpacityInactive", activeOpacity) : activeOpacity;
 		m_chkEnableInactiveOpacity->SetValue(hasInactiveOpacity);
@@ -313,7 +313,7 @@ namespace OpenGlass
 			? m_config->GetDword(L"ColorizationOpacityInactiveMaximized", colorOpacityInactive)
 			: colorOpacityInactive;
 
-		ApplyChoiceSlider(m_chModeColorizationOpacity, m_slColorizationOpacity, colorOpacityActive, 0xFFFFFFFF, 0xFFFFFFFE, 55);
+		ApplyChoiceSlider(m_chModeColorizationOpacity, m_slColorizationOpacity, colorOpacityActive, 0xFFFFFFFF, 0xFFFFFFFE, 100);
 		ApplyChoiceSlider(m_chModeColorizationOpacityInactive, m_slColorizationOpacityInactive, colorOpacityInactive, 0xFFFFFFFF, 0xFFFFFFFE, 100);
 		ApplyChoiceSlider(m_chModeColorizationOpacityMaximized, m_slColorizationOpacityMaximized, colorOpacityMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 75);
 		ApplyChoiceSlider(m_chModeColorizationOpacityInactiveMaximized, m_slColorizationOpacityInactiveMaximized, colorOpacityInactiveMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 75);
