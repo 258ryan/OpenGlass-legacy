@@ -641,7 +641,7 @@ namespace OpenGlass
 
 			if (item.overrideIcon)
 			{
-				bool show = isRelevant && overrideExists;
+				bool show = overrideExists;
 				if (item.key == L"ColorizationColorInactive")
 				{
 					show = false;
@@ -654,7 +654,7 @@ namespace OpenGlass
 			}
 			if (item.hkcuWarnIcon)
 			{
-				bool show = isRelevant && hkcuHasValue;
+				bool show = hkcuHasValue;
 				if (item.hkcuWarnIcon->IsShown() != show)
 				{
 					item.hkcuWarnIcon->Show(show);
