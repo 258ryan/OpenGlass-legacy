@@ -728,8 +728,8 @@ void GlassKernel::Update(GlassEngine::UpdateType type)
 {
 	if (type & GlassEngine::UpdateType::Theme)
 	{
-		// glow loaded from the atlas
-		Shared::g_textGlowMode = 1;
+		// glow loaded from the atlas, with per-state opacity (dimmer on inactive windows)
+		Shared::g_textGlowMode = 2;
 
 		WCHAR reflectionTexturePath[MAX_PATH]{};
 		GlassEngine::GetStringFromRegistry(L"CustomThemeReflection", reflectionTexturePath);

@@ -1839,33 +1839,18 @@ void CaptionTextHandler::Update(GlassEngine::UpdateType type)
 		// Vista: title text stays on the left. CaptionTextAliasing is the one text option that stays configurable.
 		g_centerCaption = 0;
 		g_captionTextAliasing = std::clamp(static_cast<int>(GlassEngine::GetDwordFromRegistry(L"CaptionTextAliasing", FALSE)), 0, 1);
-		// Vista: black caption text, white on maximized (opaque black glass) windows.
+		// Vista: black caption text, slightly softened (#222222) when inactive instead of switching to gray;
+		// white on maximized (opaque black glass) windows.
 		g_captionActiveColor = RGB(0, 0, 0);
-		g_captionInactiveColor = RGB(0, 0, 0);
+		g_captionInactiveColor = RGB(0x22, 0x22, 0x22);
 		g_captionActiveColorMaximized = RGB(255, 255, 255);
 		g_captionInactiveColorMaximized = RGB(255, 255, 255);
 
-		const auto themeHandle = CustomThemeAtlasLoader::GetThemeHandle();
-		if (themeHandle)
-		{
-			int value;
-
-			value = 100;
-			CustomThemeAtlasLoader::MyGetThemeInt(themeHandle, static_cast<int>(DWM_WINDOW_THEME_PART::TOPFRAME), 1, TMT_OPACITY, &value);
-			Shared::g_glowOpacity = value / 100.f;
-
-			value = 100;
-			CustomThemeAtlasLoader::MyGetThemeInt(themeHandle, static_cast<int>(DWM_WINDOW_THEME_PART::TOPFRAME), 2, TMT_OPACITY, &value);
-			Shared::g_glowOpacityInactive = value / 100.f;
-
-			value = 100;
-			CustomThemeAtlasLoader::MyGetThemeInt(themeHandle, static_cast<int>(DWM_WINDOW_THEME_PART::TOPFRAME), 3, TMT_OPACITY, &value);
-			Shared::g_glowOpacityMaximized = value / 100.f;
-
-			value = 100;
-			CustomThemeAtlasLoader::MyGetThemeInt(themeHandle, static_cast<int>(DWM_WINDOW_THEME_PART::TOPFRAME), 4, TMT_OPACITY, &value);
-			Shared::g_glowOpacityInactiveMaximized = value / 100.f;
-		}
+		// white glow behind the text, dimmed on inactive windows
+		Shared::g_glowOpacity = 1.f;
+		Shared::g_glowOpacityInactive = .6f;
+		Shared::g_glowOpacityMaximized = 1.f;
+		Shared::g_glowOpacityInactiveMaximized = .6f;
 	}
 }
 

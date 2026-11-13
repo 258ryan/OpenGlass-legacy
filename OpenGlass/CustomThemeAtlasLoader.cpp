@@ -480,10 +480,11 @@ void CustomThemeAtlasLoader::Update(GlassEngine::UpdateType type)
 
 		// reflection.png carries the sheen's own vertical alpha profile, so it is drawn at full strength:
 		// GetAdjustedReflectionIntensity() turns 100% * 100% intensity into a factor of 1 after clamping.
+		// inactive windows get half that strength (0.25 / 0.5 = 0.5), so the active window stands out.
 		Shared::g_reflectionOpacity = 1.f;
-		Shared::g_reflectionOpacityInactive = 1.f;
+		Shared::g_reflectionOpacityInactive = .25f;
 		Shared::g_reflectionOpacityMaximized = 1.f;
-		Shared::g_reflectionOpacityInactiveMaximized = 1.f;
+		Shared::g_reflectionOpacityInactiveMaximized = .25f;
 
 		// colorization opacity: active, inactive, maximized, inactive maximized
 		Shared::g_colorizationOpacity = 1.f;
