@@ -1080,7 +1080,7 @@ namespace OpenGlass
 
 		m_slReflectionIntensity->Bind(wxEVT_SLIDER, [this, updateDword, deleteValue, setSliderTooltipValue]([[maybe_unused]] wxCommandEvent& e) {
 			int val = e.GetInt();
-			if (val == 0)
+			if (val == 100)
 			{
 				deleteValue(L"ColorizationGlassReflectionIntensity");
 				NotifySettingsChange(ChangeType::Colorization);
@@ -1117,7 +1117,7 @@ namespace OpenGlass
 
 		m_slReflectionParallax->Bind(wxEVT_SLIDER, [this, updateDword, deleteValue, setSliderTooltipValue]([[maybe_unused]] wxCommandEvent& e) {
 			int val = e.GetInt();
-			if (val == 13)
+			if (val == 0)
 			{
 				deleteValue(L"ColorizationGlassReflectionParallaxIntensity");
 				NotifySettingsChange(ChangeType::Colorization);
@@ -1279,14 +1279,15 @@ namespace OpenGlass
 
 		m_chkUseD3D->Bind(wxEVT_CHECKBOX, [this, updateDword, updateD3DControls, deleteValue]([[maybe_unused]] wxCommandEvent& e) {
 			bool checked = e.IsChecked();
-			if (!checked)
+			if (checked)
 			{
+				// on is the default
 				deleteValue(L"UseDirect3DRendering");
 				NotifySettingsChange(ChangeType::Colorization);
 			}
 			else
 			{
-				updateDword(L"UseDirect3DRendering", 1, ChangeType::Colorization);
+				updateDword(L"UseDirect3DRendering", 0, ChangeType::Colorization);
 			}
 			updateD3DControls();
 		});
@@ -1342,7 +1343,7 @@ namespace OpenGlass
 			int mode = m_chTextGlowMode->GetSelection();
 			int size = m_scTextGlowSize->GetValue();
 			DWORD val = (DWORD)mode | ((DWORD)size << 16);
-			if (val == 1)
+			if (val == 2)
 			{
 				deleteValue(L"TextGlowMode");
 				NotifySettingsChange(ChangeType::Theme);

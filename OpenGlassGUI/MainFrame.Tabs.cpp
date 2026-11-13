@@ -289,11 +289,11 @@ namespace OpenGlass
 		}
 
 		// Reflection Intensity
-		m_slReflectionIntensity = new NativeSlider(panel, wxID_ANY, 0, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
+		m_slReflectionIntensity = new NativeSlider(panel, wxID_ANY, 100, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
 		AddProperty(panel, reflectionGroup, L"Glass reflection intensity:", m_slReflectionIntensity, L"ColorizationGlassReflectionIntensity");
 
 		// Reflection Parallax
-		m_slReflectionParallax = new NativeSlider(panel, wxID_ANY, 13, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
+		m_slReflectionParallax = new NativeSlider(panel, wxID_ANY, 0, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS);
 		AddProperty(panel, reflectionGroup, L"Glass parallax intensity:", m_slReflectionParallax, L"ColorizationGlassReflectionParallaxIntensity");
 
 		// Reflection Policy

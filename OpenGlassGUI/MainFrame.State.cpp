@@ -103,7 +103,7 @@ namespace OpenGlass
 			}
 		};
 
-		m_slReflectionIntensity->SetValue(m_config->GetDword(L"ColorizationGlassReflectionIntensity", 0));
+		m_slReflectionIntensity->SetValue(m_config->GetDword(L"ColorizationGlassReflectionIntensity", 100));
 		syncSliderTooltip(m_slReflectionIntensity);
 
 		DWORD refOpacityActive = m_config->GetDword(L"ColorizationGlassReflectionOpacity", 0xFFFFFFFE);
@@ -117,16 +117,16 @@ namespace OpenGlass
 			? m_config->GetDword(L"ColorizationGlassReflectionOpacityInactiveMaximized", refOpacityInactive)
 			: refOpacityInactive;
 
-		ApplyChoiceSlider(m_chModeReflectionOpacity, m_slReflectionOpacity, refOpacityActive, 0xFFFFFFFF, 0xFFFFFFFE, 50);
-		ApplyChoiceSlider(m_chModeReflectionOpacityInactive, m_slReflectionOpacityInactive, refOpacityInactive, 0xFFFFFFFF, 0xFFFFFFFE, 50);
-		ApplyChoiceSlider(m_chModeReflectionOpacityMaximized, m_slReflectionOpacityMaximized, refOpacityMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 50);
-		ApplyChoiceSlider(m_chModeReflectionOpacityInactiveMaximized, m_slReflectionOpacityInactiveMaximized, refOpacityInactiveMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 50);
+		ApplyChoiceSlider(m_chModeReflectionOpacity, m_slReflectionOpacity, refOpacityActive, 0xFFFFFFFF, 0xFFFFFFFE, 100);
+		ApplyChoiceSlider(m_chModeReflectionOpacityInactive, m_slReflectionOpacityInactive, refOpacityInactive, 0xFFFFFFFF, 0xFFFFFFFE, 25);
+		ApplyChoiceSlider(m_chModeReflectionOpacityMaximized, m_slReflectionOpacityMaximized, refOpacityMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 100);
+		ApplyChoiceSlider(m_chModeReflectionOpacityInactiveMaximized, m_slReflectionOpacityInactiveMaximized, refOpacityInactiveMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 25);
 		syncSliderTooltip(m_slReflectionOpacity);
 		syncSliderTooltip(m_slReflectionOpacityInactive);
 		syncSliderTooltip(m_slReflectionOpacityMaximized);
 		syncSliderTooltip(m_slReflectionOpacityInactiveMaximized);
 
-		m_slReflectionParallax->SetValue(m_config->GetDword(L"ColorizationGlassReflectionParallaxIntensity", 13));
+		m_slReflectionParallax->SetValue(m_config->GetDword(L"ColorizationGlassReflectionParallaxIntensity", 0));
 		syncSliderTooltip(m_slReflectionParallax);
 
 		DWORD refPolicy = m_config->GetDword(L"ColorizationGlassReflectionPolicy", 0xFFFFFFFF);
@@ -163,7 +163,7 @@ namespace OpenGlass
 		m_slMaterialOpacity->SetValue(m_config->GetDword(L"MaterialOpacity", 0));
 		syncSliderTooltip(m_slMaterialOpacity);
 
-		bool useD3D = m_config->GetDword(L"UseDirect3DRendering", 0) != 0;
+		bool useD3D = m_config->GetDword(L"UseDirect3DRendering", 1) != 0;
 		m_chkUseD3D->SetValue(useD3D);
 		auto blurDeviationToRadius = [](DWORD deviation) -> int {
 			int val = (static_cast<int>(deviation) * 3 + 5) / 10;
@@ -204,7 +204,7 @@ namespace OpenGlass
 		m_scRoundRectRadius->Enable(m_chRoundRectProfile->GetSelection() == 2);
 
 		// TextGlow
-		DWORD glowVal = m_config->GetDword(L"TextGlowMode", 1);
+		DWORD glowVal = m_config->GetDword(L"TextGlowMode", 2);
 		int glowMode = glowVal & 0xFFFF;
 		int glowSize = (glowVal >> 16) & 0xFFFF;
 
@@ -313,10 +313,10 @@ namespace OpenGlass
 			? m_config->GetDword(L"ColorizationOpacityInactiveMaximized", colorOpacityInactive)
 			: colorOpacityInactive;
 
-		ApplyChoiceSlider(m_chModeColorizationOpacity, m_slColorizationOpacity, colorOpacityActive, 0xFFFFFFFF, 0xFFFFFFFE, 100);
+		ApplyChoiceSlider(m_chModeColorizationOpacity, m_slColorizationOpacity, colorOpacityActive, 0xFFFFFFFF, 0xFFFFFFFE, 55);
 		ApplyChoiceSlider(m_chModeColorizationOpacityInactive, m_slColorizationOpacityInactive, colorOpacityInactive, 0xFFFFFFFF, 0xFFFFFFFE, 100);
-		ApplyChoiceSlider(m_chModeColorizationOpacityMaximized, m_slColorizationOpacityMaximized, colorOpacityMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 100);
-		ApplyChoiceSlider(m_chModeColorizationOpacityInactiveMaximized, m_slColorizationOpacityInactiveMaximized, colorOpacityInactiveMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 100);
+		ApplyChoiceSlider(m_chModeColorizationOpacityMaximized, m_slColorizationOpacityMaximized, colorOpacityMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 75);
+		ApplyChoiceSlider(m_chModeColorizationOpacityInactiveMaximized, m_slColorizationOpacityInactiveMaximized, colorOpacityInactiveMaximized, 0xFFFFFFFF, 0xFFFFFFFE, 75);
 		syncSliderTooltip(m_slColorizationOpacity);
 		syncSliderTooltip(m_slColorizationOpacityInactive);
 		syncSliderTooltip(m_slColorizationOpacityMaximized);
