@@ -928,8 +928,10 @@ void GlassRenderer::Update(GlassEngine::UpdateType type)
 {
 	if (type & GlassEngine::UpdateType::Theme)
 	{
-		// no material texture on Vista glass
-		Shared::g_materialTexturePath.clear();
+		WCHAR materialTexturePath[MAX_PATH]{};
+		GlassEngine::GetStringFromRegistry(L"CustomThemeMaterial", materialTexturePath);
+		PathUnquoteSpacesW(materialTexturePath);
+		Shared::g_materialTexturePath.assign(materialTexturePath);
 
 		for (auto& [_, deviceResources] : g_deviceResources)
 		{
@@ -939,10 +941,11 @@ void GlassRenderer::Update(GlassEngine::UpdateType type)
 	}
 	if (type & GlassEngine::UpdateType::Backdrop)
 	{
-		// Vista glass: 63% color intensity, no material texture
-		Shared::g_glassOpacity = .63f;
-		Shared::g_glassOpacityInactive = .63f;
-		Shared::g_materialIntensity = 0.f;
+		// Vista glass: 63% color intensity by default, no material texture
+		const auto value = GlassEngine::GetDwordFromRegistry(L"GlassOpacity", 63);
+		Shared::g_glassOpacity = std::clamp(static_cast<float>(value) / 100.f, 0.f, 1.f);
+		Shared::g_glassOpacityInactive = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"GlassOpacityInactive", value)) / 100.f, 0.f, 1.f);
+		Shared::g_materialIntensity = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"MaterialOpacity")) / 100.f, 0.f, 1.f);
 	}
 }
 

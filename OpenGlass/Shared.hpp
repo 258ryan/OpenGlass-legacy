@@ -26,16 +26,17 @@ namespace OpenGlass::Shared
 	} g_reflectionPolicy{ 0 };
 
 	inline bool g_disableOnBattery{ true };
-	inline constexpr bool g_overrideAccent{ false };
-	// Vista has no modern borders
-	inline constexpr bool g_disableModernBorders{ true };
+	inline bool g_overrideAccent{ false };
+	// Vista has no modern borders (DisableModernBorders, default on)
+	inline bool g_disableModernBorders{ true };
 	// Vista: 8
 	inline int g_roundRectRadius{ 8 };
 	inline float g_blurAmount{};
 	inline D2D1_GAUSSIANBLUR_OPTIMIZATION g_blurOptimization{};
 	inline float g_glassOpacity{};
 	inline float g_glassOpacityInactive{};
-	inline constexpr bool g_useD3DRendering{ true };
+	// Vista default: on (UseDirect3DRendering)
+	inline bool g_useD3DRendering{ true };
 
 	inline D2D1_COLOR_F g_color{};
 	inline D2D1_COLOR_F g_colorInactive{};

@@ -728,8 +728,8 @@ void GlassKernel::Update(GlassEngine::UpdateType type)
 {
 	if (type & GlassEngine::UpdateType::Theme)
 	{
-		// glow loaded from the atlas, with per-state opacity (dimmer on inactive windows)
-		Shared::g_textGlowMode = 2;
+		// glow from the atlas with per-state opacity (dimmer on inactive windows) by default
+		Shared::g_textGlowMode = GlassEngine::GetDwordFromRegistry(L"TextGlowMode", 2);
 
 		WCHAR reflectionTexturePath[MAX_PATH]{};
 		GlassEngine::GetStringFromRegistry(L"CustomThemeReflection", reflectionTexturePath);
@@ -749,15 +749,15 @@ void GlassKernel::Update(GlassEngine::UpdateType type)
 	{
 		Shared::g_transparencyEnabled = GlassEngine::GetPersonalizeKey() ? Util::IsTransparencyEnabled(GlassEngine::GetPersonalizeKey()) : true;
 
-		// Windows Vista Aero:
+		// Windows Vista Aero defaults, each one still overridable from the registry.
 		// the reflection is a 1:1 static backdrop (parallax 0): reflection.png is stretched over the whole
 		// virtual desktop, fixed in screen space, and each frame is a moving viewport onto it.
-		Shared::g_reflectionIntensity = 1.f;
-		Shared::g_reflectionParallaxIntensity = 0.f;
-		Shared::g_reflectionPolicy = static_cast<Shared::ReflectionPolicy>(0xFFFFFFFF);
-		Shared::g_blurAmount = 3.f; // sigma = 3.0
-		Shared::g_blurOptimization = D2D1_GAUSSIANBLUR_OPTIMIZATION_SPEED;
-		// RoundRectRadius is the one geometry option that stays configurable, Vista's is 8.
+		Shared::g_reflectionIntensity = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"ColorizationGlassReflectionIntensity", 100)) / 100.f, 0.f, 1.f);
+		Shared::g_reflectionParallaxIntensity = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"ColorizationGlassReflectionParallaxIntensity", 0)) / 100.f, 0.f, 1.f);
+		Shared::g_reflectionPolicy = static_cast<Shared::ReflectionPolicy>(GlassEngine::GetDwordFromRegistry(L"ColorizationGlassReflectionPolicy", 0xFFFFFFFF));
+		Shared::g_blurAmount = std::clamp(static_cast<float>(GlassEngine::GetDwordFromRegistry(L"BlurDeviation", 30)) / 10.f * 3.f, 0.f, 250.f);
+		Shared::g_blurOptimization = static_cast<D2D1_GAUSSIANBLUR_OPTIMIZATION>(std::clamp(GlassEngine::GetDwordFromRegistry(L"BlurOptimization", 0), 0ul, 2ul));
+		// Vista's radius is 8
 		Shared::g_roundRectRadius = static_cast<int>(GlassEngine::GetDwordFromRegistry(L"RoundRectRadius", 8));
 		ApplyCornerRadiusToWindowFrames(Shared::g_roundRectRadius);
 
@@ -767,6 +767,8 @@ void GlassKernel::Update(GlassEngine::UpdateType type)
 
 		Shared::g_opaqueBlend = static_cast<int>(GlassEngine::GetDwordFromRegistry(L"ColorizationOpaqueBlend"));
 		Shared::g_opaqueBlendPriority = Shared::OpaqueBlendPriority::Vista;
+
+		Shared::g_useD3DRendering = static_cast<bool>(GlassEngine::GetDwordFromRegistry(L"UseDirect3DRendering", 1));
 	}
 }
 

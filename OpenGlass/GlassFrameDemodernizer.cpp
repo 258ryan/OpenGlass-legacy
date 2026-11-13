@@ -227,9 +227,18 @@ bool WINAPI GlassFrameDemodernizer::MySetMargin(
 	);
 }
 
-void GlassFrameDemodernizer::Update([[maybe_unused]] GlassEngine::UpdateType type)
+void GlassFrameDemodernizer::Update(GlassEngine::UpdateType type)
 {
-	// modern (Windows 11) borders are always disabled, see Shared::g_disableModernBorders.
+	if (uDWM::g_versionInfo.build < os::build_w11_21h2)
+	{
+		return;
+	}
+
+	if (type & GlassEngine::UpdateType::Theme)
+	{
+		// Vista has no modern borders: disabled unless the value says otherwise
+		Shared::g_disableModernBorders = static_cast<bool>(GlassEngine::GetDwordFromRegistry(L"DisableModernBorders", TRUE));
+	}
 }
 
 void GlassFrameDemodernizer::Startup()

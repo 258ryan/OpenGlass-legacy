@@ -476,27 +476,45 @@ void CustomThemeAtlasLoader::Update(GlassEngine::UpdateType type)
 	}
 	if (type & GlassEngine::UpdateType::Backdrop || type & GlassEngine::UpdateType::Theme)
 	{
-		// Windows Vista Aero. fixed values, nothing here is configurable.
+		// Windows Vista Aero defaults; the registry values (when present) still override them.
+		// 0xFFFFFFFE / 0xFFFFFFFF ("auto" / "from theme") fall back to the Vista default.
+		const auto percent = [](DWORD raw, float vistaDefault)
+		{
+			return (raw == 0xFFFFFFFE || raw == 0xFFFFFFFF) ? vistaDefault : std::clamp(static_cast<float>(raw) / 100.f, 0.f, 1.f);
+		};
 
 		// reflection.png carries the sheen's own vertical alpha profile, so it is drawn at full strength:
 		// GetAdjustedReflectionIntensity() turns 100% * 100% intensity into a factor of 1 after clamping.
-		// inactive windows get half that strength (0.25 / 0.5 = 0.5), so the active window stands out.
-		Shared::g_reflectionOpacity = 1.f;
-		Shared::g_reflectionOpacityInactive = .25f;
-		Shared::g_reflectionOpacityMaximized = 1.f;
-		Shared::g_reflectionOpacityInactiveMaximized = .25f;
+		// inactive windows get half that (25% -> factor 0.5), so the active window stands out.
+		auto active = GlassEngine::GetDwordFromRegistry(L"ColorizationGlassReflectionOpacity", 0xFFFFFFFE);
+		auto inactive = GlassEngine::GetDwordFromRegistry(L"ColorizationGlassReflectionOpacityInactive", active);
+		auto maximized = GlassEngine::GetDwordFromRegistry(L"ColorizationGlassReflectionOpacityMaximized", active);
+		auto inactiveMaximized = GlassEngine::GetDwordFromRegistry(L"ColorizationGlassReflectionOpacityInactiveMaximized", inactive);
+		Shared::g_reflectionOpacity = percent(active, 1.f);
+		Shared::g_reflectionOpacityInactive = percent(inactive, .25f);
+		Shared::g_reflectionOpacityMaximized = percent(maximized, 1.f);
+		Shared::g_reflectionOpacityInactiveMaximized = percent(inactiveMaximized, .25f);
 
 		// colorization opacity: active, inactive, maximized, inactive maximized
-		Shared::g_colorizationOpacity = 1.f;
-		Shared::g_colorizationOpacityInactive = .55f;
-		Shared::g_colorizationOpacityMaximized = .75f;
-		Shared::g_colorizationOpacityInactiveMaximized = .75f;
+		active = GlassEngine::GetDwordFromRegistry(L"ColorizationOpacity", 0xFFFFFFFE);
+		inactive = GlassEngine::GetDwordFromRegistry(L"ColorizationOpacityInactive", active);
+		maximized = GlassEngine::GetDwordFromRegistry(L"ColorizationOpacityMaximized", active);
+		inactiveMaximized = GlassEngine::GetDwordFromRegistry(L"ColorizationOpacityInactiveMaximized", inactive);
+		Shared::g_colorizationOpacity = percent(active, 1.f);
+		Shared::g_colorizationOpacityInactive = percent(inactive, .55f);
+		Shared::g_colorizationOpacityMaximized = percent(maximized, .75f);
+		Shared::g_colorizationOpacityInactiveMaximized = percent(inactiveMaximized, .75f);
 
 		// base colors: maximized windows blend onto opaque black (Vista prefers ColorizationBaseMaximized
 		// when glass is opaque), the opaque fallback is the light gray used when transparency is off.
-		Shared::g_colorizationBaseTransparent = Color::FromArgb(0x00000000, false);
-		Shared::g_colorizationBaseMaximized = Color::FromArgb(0xFF000000, false);
-		Shared::g_colorizationBaseOpaque = Color::FromArgb(0xFFDFDFDF, false);
+		const auto base = [](PCWSTR key, DWORD vistaDefault)
+		{
+			const auto raw = GlassEngine::GetDwordFromRegistry(key, 0xFFFFFFFE);
+			return Color::FromArgb((raw == 0xFFFFFFFE || raw == 0xFFFFFFFF) ? vistaDefault : raw, false);
+		};
+		Shared::g_colorizationBaseTransparent = base(L"ColorizationBaseTransparent", 0x00000000);
+		Shared::g_colorizationBaseMaximized = base(L"ColorizationBaseMaximized", 0xFF000000);
+		Shared::g_colorizationBaseOpaque = base(L"ColorizationBaseOpaque", 0xFFDFDFDF);
 	}
 }
 

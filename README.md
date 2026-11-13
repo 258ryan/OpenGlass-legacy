@@ -90,18 +90,29 @@ style switches; the values below are fixed (96 DPI values, scaled by the window 
 
 ## Registry reference
 
-Only these values are read. Everything else from earlier versions (`GlassType`, `HighlightStyle`, `CaptionButtons`,
-`CenterCaption`, `ColorizationOpaqueBlendPriority`, the balance/afterglow values, ...) is ignored.
+The Vista values above are the **defaults**; these registry values still override them (HKCU first, then HKLM).
+The Windows 7/8 values (`GlassType`, `HighlightStyle`, `CaptionButtons`, `CenterCaption`,
+`ColorizationOpaqueBlendPriority`, the balance/afterglow values, ...) are ignored.
 
 | Key Name | Type | Description |
 | -------- | ---- | ----------- |
 | ColorizationColor(Override)<br>ColorizationColorInactive | DWORD | ARGB color used for the glass effect, alpha channel is ignored. |
+| GlassOpacity<br>GlassOpacityInactive | DWORD | Intensity of the color (0-100%). Default 63%. |
+| ColorizationOpacity<br>ColorizationOpacityInactive<br>ColorizationOpacityMaximized<br>ColorizationOpacityInactiveMaximized | DWORD | Factors applied to color blending (0-100%). Defaults 100 / 55 / 75 / 75. `0xFFFFFFFE` or `0xFFFFFFFF` use the default. |
+| ColorizationBaseTransparent<br>ColorizationBaseMaximized<br>ColorizationBaseOpaque | DWORD | ARGB base colors. Defaults `0x00000000`, `0xFF000000`, `0xFFDFDFDF`. `0xFFFFFFFE` / `0xFFFFFFFF` use the default. |
 | ColorizationOpaqueBlend | DWORD | Controls the transparency of glass effect (default = 0). |
-| RoundRectRadius | DWORD | The radius of glass geometry. Default is 8 (Vista), `0` gives square corners. |
-| CaptionTextAliasing | DWORD | Which OS' ClearType aliasing the title bar text is rendered with.<br><br><ul><li>0x0 = Windows 7 style (default)</li><li>0x1 = Windows 8 style</li></ul> |
-| CustomThemeAtlas | String | Path to PNG file with theme resource (text glow), with an optional `.layout` file next to it. |
-| DisableGlassOnBattery | DWORD | <ul><li>0x1 = When energy saver is on then the glass effect will be opaque to decrease energy consumption (default)</li><li>0x0 = glass effect won't be opaque on energy saver</li></ul>Intended for `HKLM`. |
-| DisabledHooks | DWORD | Controls which module's hooks are disabled, which will also control the availability of features. See [Shared.hpp](OpenGlass/Shared.hpp). ⚠️ Should only be used to maintain compatibility with third-party applications. |
+| ColorizationColorCaption<br>ColorizationColorCaptionInactive<br>ColorizationColorCaptionMaximized<br>ColorizationColorCaptionInactiveMaximized | DWORD | Caption text color, 0xBBGGRR. `0xFFFFFFFD` = Vista default (black, `#222222` inactive, white maximized), `0xFFFFFFFE` = from the theme, `0xFFFFFFFF` = system. |
+| ColorizationGlassReflectionIntensity<br>ColorizationGlassReflectionOpacity(Inactive/Maximized/InactiveMaximized)<br>ColorizationGlassReflectionParallaxIntensity<br>ColorizationGlassReflectionPolicy | DWORD | Reflection controls. Defaults: intensity 100%, opacity 100 / 25 / 100 / 25, parallax 0%, policy everywhere. |
+| BlurDeviation<br>BlurOptimization | DWORD | Blur sigma (default 30 = 3.0) and quality (0 speed, 1 balanced, 2 quality). |
+| UseDirect3DRendering | DWORD | Default 1. |
+| RoundRectRadius | DWORD | Radius of glass geometry. Default 8, `0` gives square corners. |
+| CaptionTextAliasing | DWORD | 0x0 = Windows 7 style ClearType (default), 0x1 = Windows 8 style. |
+| TextGlowMode | DWORD | Default 2 (atlas glow, dimmer when inactive). 0 none, 1 atlas, 3 composited. |
+| DisableModernBorders | DWORD | Default 1 (Windows 11 only). |
+| GlassOverrideAccent | DWORD | Overrides accent blur surfaces with glass (default 0). |
+| CustomThemeAtlas / CustomThemeReflection / CustomThemeMaterial / MaterialOpacity | String / DWORD | Custom theme art. |
+| DisableGlassOnBattery | DWORD | 1 = opaque glass in energy saver (default), 0 = keep glass. Intended for `HKLM`. |
+| DisabledHooks | DWORD | Bit mask of hook modules to disable, see [Shared.hpp](OpenGlass/Shared.hpp). `0x10` turns off the Vista caption button sizes and frame metrics. |
 | GlassSafetyZoneMode | DWORD | Set 0 to disable glass safety zone. (default = 1) |
 
 ## Credits

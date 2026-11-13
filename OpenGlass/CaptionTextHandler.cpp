@@ -1841,10 +1841,28 @@ void CaptionTextHandler::Update(GlassEngine::UpdateType type)
 		g_captionTextAliasing = std::clamp(static_cast<int>(GlassEngine::GetDwordFromRegistry(L"CaptionTextAliasing", FALSE)), 0, 1);
 		// Vista: black caption text, slightly softened (#222222) when inactive instead of switching to gray;
 		// white on maximized (opaque black glass) windows.
-		g_captionActiveColor = RGB(0, 0, 0);
-		g_captionInactiveColor = RGB(0x22, 0x22, 0x22);
-		g_captionActiveColorMaximized = RGB(255, 255, 255);
-		g_captionInactiveColorMaximized = RGB(255, 255, 255);
+		// ColorizationColorCaption* still override these (0xFFFFFFFD = Vista default, 0xFFFFFFFE = theme).
+		const auto captionColor = [](PCWSTR key, DWORD fallback, COLORREF vistaDefault, int themeState)
+		{
+			auto color = GlassEngine::GetDwordFromRegistry(key, fallback);
+			if (color == 0xFFFFFFFD)
+			{
+				return static_cast<DWORD>(vistaDefault);
+			}
+			if (color == 0xFFFFFFFE)
+			{
+				color = vistaDefault;
+				if (const auto themeHandle = CustomThemeAtlasLoader::GetThemeHandle())
+				{
+					CustomThemeAtlasLoader::MyGetThemeColor(themeHandle, static_cast<int>(DWM_WINDOW_THEME_PART::TOPFRAME), themeState, TMT_TEXTCOLOR, &color);
+				}
+			}
+			return color;
+		};
+		g_captionActiveColor = captionColor(L"ColorizationColorCaption", 0xFFFFFFFD, RGB(0, 0, 0), 1);
+		g_captionInactiveColor = captionColor(L"ColorizationColorCaptionInactive", 0xFFFFFFFD, RGB(0x22, 0x22, 0x22), 2);
+		g_captionActiveColorMaximized = captionColor(L"ColorizationColorCaptionMaximized", 0xFFFFFFFD, RGB(255, 255, 255), 3);
+		g_captionInactiveColorMaximized = captionColor(L"ColorizationColorCaptionInactiveMaximized", 0xFFFFFFFD, RGB(255, 255, 255), 4);
 
 		// white glow behind the text, dimmed on inactive windows
 		Shared::g_glowOpacity = 1.f;

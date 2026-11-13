@@ -331,8 +331,11 @@ void AccentOverrider::Update(GlassEngine::UpdateType type)
 {
 	if (type & GlassEngine::UpdateType::Backdrop)
 	{
-		// accent surfaces are never overridden, Vista has none
-		g_accentClipRegions.clear();
+		Shared::g_overrideAccent = static_cast<bool>(GlassEngine::GetDwordFromRegistry(L"GlassOverrideAccent"));
+		if (!Shared::g_overrideAccent)
+		{
+			g_accentClipRegions.clear();
+		}
 	}
 }
 

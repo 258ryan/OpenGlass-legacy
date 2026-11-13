@@ -8,6 +8,12 @@ jobs:
     # Changed from windows-2022 to windows-2025 to enable the native v145 toolset
     runs-on: windows-2025
 
+    env:
+      # the projects build with the static triplet; vcpkg's binary cache is restored between runs
+      VCPKG_DEFAULT_TRIPLET: x64-windows-static
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\.ci-cache\vcpkg-binary-cache
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}\.ci-cache\vcpkg-binary-cache,readwrite
+
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -33,11 +39,30 @@ jobs:
     - name: Setup NuGet Command Line
       uses: nuget/setup-nuget@v2
 
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~\.nuget\packages
+          ${{ github.workspace }}\packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.config', 'Common/NuGet.props', 'Common/NuGet.targets') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Cache vcpkg binary packages
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}\.ci-cache\vcpkg-binary-cache
+        key: ${{ runner.os }}-vcpkg-x64-windows-static-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'ports/**') }}
+        restore-keys: |
+          ${{ runner.os }}-vcpkg-x64-windows-static-
+
     - name: Run Package Manager Restores
       run: |
+        New-Item -ItemType Directory -Force -Path $env:VCPKG_DEFAULT_BINARY_CACHE | Out-Null
         nuget restore OpenGlass.slnx
         vcpkg integrate install
-        vcpkg install --triplet=x64-windows
+        # no separate "vcpkg install": MSBuild installs the manifest dependencies for the triplet it builds with
 
     - name: Run Windows C++ MSBuild Engine
       run: |
